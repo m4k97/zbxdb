@@ -1662,7 +1662,7 @@ and &#13;
                             <trigger_prototypes>
                                 <trigger_prototype>
                                     <expression>{last(#3)}&lt;30</expression>
-                                    <name>fsfi too low {#TS_NAME},{#DF_NAME}</name>
+                                    <name>fsfi < 30 {#TS_NAME},{#DF_NAME}</name>
                                     <priority>INFO</priority>
                                 </trigger_prototype>
                             </trigger_prototypes>
