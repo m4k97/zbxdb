@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-01-27T03:30:14Z</date>
+    <date>2021-02-02T03:28:14Z</date>
     <groups>
         <group>
             <name>Database</name>
@@ -205,6 +205,21 @@
                         </application>
                     </applications>
                     <request_method>POST</request_method>
+                </item>
+                <item>
+                    <name>db[list_tablespaces]</name>
+                    <type>TRAP</type>
+                    <key>db[list_tablespaces]</key>
+                    <delay>0</delay>
+                    <history>4w</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>list of permanent tablespaces</description>
+                    <applications>
+                        <application>
+                            <name>db</name>
+                        </application>
+                    </applications>
                 </item>
                 <item>
                     <name>disks[cached]</name>
@@ -1431,6 +1446,7 @@ and {template zbxDB:expu[{#PDB},{#USERNAME},expiring].nodata(2h)}=0</description
                     <type>TRAP</type>
                     <key>p_ts.lld</key>
                     <delay>0</delay>
+                    <lifetime>1h</lifetime>
                     <item_prototypes>
                         <item_prototype>
                             <name>p_ts[{#PDB}_{#TS_NAME}_filesize]</name>
@@ -1514,6 +1530,7 @@ and {template zbxDB:expu[{#PDB},{#USERNAME},expiring].nodata(2h)}=0</description
                             <key>p_ts[{#PDB},{#TS_NAME},pctfreeMAX]</key>
                             <delay>0</delay>
                             <history>1w</history>
+                            <discover>NO_DISCOVER</discover>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
                             <description>same as pctfree but based on max filesize</description>
@@ -1527,6 +1544,7 @@ and {template zbxDB:expu[{#PDB},{#USERNAME},expiring].nodata(2h)}=0</description
                                 <trigger_prototype>
                                     <expression>{timeleft(14d,,0)} &lt; 5d or {timeleft(14d,,0)} &gt;= 100d and {timeleft(7d,,0)} &lt; 5d or {timeleft(7d,,0)} &gt;= 100d and {timeleft(1d,,0)} &lt; 2d</expression>
                                     <name>p_ts[{#PDB}_{#TS_NAME}] fills up within 5d</name>
+                                    <discover>NO_DISCOVER</discover>
                                     <priority>AVERAGE</priority>
                                     <description>Does the tablespace fill up within 5d?&#13;
 based on data of last 14d, last 7d or last day.</description>
@@ -1534,6 +1552,7 @@ based on data of last 14d, last 7d or last day.</description>
                                 <trigger_prototype>
                                     <expression>{timeleft(14d,,0)} &lt; 100d and {timeleft(14d,,0)} &lt; 14d or {timeleft(14d,,0)} &gt;= 100d and ( {timeleft(7d,,0)} &lt; 100d and {timeleft(7d,,0)} &lt; 7d or {timeleft(7d,,0)} &gt;= 100d and ( {timeleft(1d,,0)} &lt; 100d and {timeleft(1d,,0)} &lt; 1d))</expression>
                                     <name>p_ts[{#PDB}_{#TS_NAME}] fills up within 14d</name>
+                                    <discover>NO_DISCOVER</discover>
                                     <priority>WARNING</priority>
                                     <description>Triggers when last 14d or last 7d timeleft has less than 7d, or last day timeleft has less than 1 day to go</description>
                                     <dependencies>
@@ -1551,6 +1570,7 @@ based on data of last 14d, last 7d or last day.</description>
                             <key>p_ts[{#PDB},{#TS_NAME},pctfree]</key>
                             <delay>0</delay>
                             <history>1w</history>
+                            <discover>NO_DISCOVER</discover>
                             <value_type>FLOAT</value_type>
                             <units>%</units>
                             <applications>
@@ -1603,6 +1623,7 @@ and {template zbxDB:p_ts[{#PDB},{#TS_NAME},pctfreeMAX,timeleft14d].last()}&lt;30
 and&#13;
 {template zbxDB:p_ts[{#PDB},{#TS_NAME},pctfreeMAX,timeleft14d].last()}&lt;{template zbxDB:p_ts[{#PDB},{#TS_NAME},pctfreeMAX,timeleft14d].last(1)}</expression>
                             <name>p_ts[{#PDB}_{#TS_NAME}] filling up</name>
+                            <discover>NO_DISCOVER</discover>
                             <description>free space decreases and timeleft also decreases and timeleft less than 4d</description>
                         </trigger_prototype>
                         <trigger_prototype>
