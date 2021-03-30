@@ -44,12 +44,31 @@ def connection_info(con):
 
         _data = _c.fetchone()
 
-        conn_info['dbversion'] = _data[0]
-        conn_info['sid'] = _data[1]
-        conn_info['serial'] = _data[2]
-        conn_info['instance_type'] = _data[3]
-        conn_info['iname'] = _data[4]
-        conn_info['uname'] = _data[5]
+        if _data is not None:
+            conn_info['dbversion'] = _data[0]
+            conn_info['sid'] = _data[1]
+            conn_info['serial'] = _data[2]
+            conn_info['instance_type'] = _data[3]
+            conn_info['iname'] = _data[4]
+            conn_info['uname'] = _data[5]
+        else:
+            _c.execute("""select substr(i.version,0,instr(i.version,'.')-1),
+                s.sid, s.serial#, p.value instance_type, i.instance_name
+                , s.username
+                from v$instance i, v$session s, v$parameter p
+                where s.sid = (select sid from v$mystat where rownum = 1)
+                and p.name = 'instance_name'""")
+            
+            _data = _c.fetchone()
+            
+            if _data is not None:
+                conn_info['dbversion'] = 'pre9'
+                conn_info['sid'] = _data[1]
+                conn_info['serial'] = _data[2]
+                #conn_info['instance_type'] = _data[3]
+                conn_info['instance_type'] = 'RDBMS'
+                conn_info['iname'] = _data[4]
+                conn_info['uname'] = _data[5]
 
     except con.DatabaseError as dberr:
         _error, = dberr.args
